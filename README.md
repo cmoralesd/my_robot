@@ -70,21 +70,31 @@ Agregaremos una rueda a la izquierda. Para ello es necesario crear un *joint* de
     </link>
 ```
 Al ejecutar nuevamente el lanzador. Se verá que la rueda no se muestra en la posición esperada y rviz2 señala un error en *RobotModel*. Esto se debe a que actualmente no hay información sobre la posición de *left_wheel_joint*.   
+   
 Para resolver esto, ejecutamos una aplicación que publique la posición de la rueda en el tópico *joint_status*. En un nuevo terminal, ejecutar:   
-`ros2 run joint_state_publisher_gui joint_state_publisher_gui`  
-Dado que habrá que hacer esta tarea cada vez que editemos el archivo URDF, es mejor agregar la instrucción al lanzador. Edita *view.launch.py*, agregando un lanzador para joint_state_publisher_gui.   
-Dentro de *generate_launch_description()*, agrega:
+`ros2 run joint_state_publisher_gui joint_state_publisher_gui`   
+   
+Dado que habrá que hacer esta tarea cada vez que editemos el archivo URDF, es mejor agregar la instrucción al lanzador. Edita *view.launch.py*, agregando un lanzador para joint_state_publisher_gui.    
+Dentro de *generate_launch_description()*, agrega lo siguiente:   
 ```
+...
 joint_state_publisher_gui_node = Node(
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui'
-        
+        name='joint_state_publisher_gui' 
     )
+...
 ```
-Y agrega *joint_state_publisher_gui_node* a la lista de ejecutable en `return LaunchDescription([])`.   
+Y añade *joint_state_publisher_gui_node* a la lista de ejecutables:
+```
+return LaunchDescription([
+    ...
+    joint_state_publisher_gui_node,
+    ...
+])
+```   
 
-Agrega ahora una nueva rueda, a la derecha: 
+Agrega ahora una nueva rueda, a la derecha:    
 ```
     <joint name="right_wheel_joint" type="continuous">
         <origin xyz="-0.1 -0.15 0.05" rpy="1.570796 0 0" />
@@ -104,9 +114,9 @@ Agrega ahora una nueva rueda, a la derecha:
         </visual>
     </link>
 ```
-Y finalmente, agrega un link de tipo *fixed* y una pequeña esfera como rueda de soporte.
+Y finalmente, agrega un link de tipo *fixed* y una pequeña esfera como rueda de soporte.   
 ```
-<joint name="connection_link" type="fixed">
+    <joint name="connection_link" type="fixed">
         <origin xyz="0.15 0 0.05" rpy="0 0 0" />
         <axis xyz="0 0 1" />
         <parent link="base_link" />
@@ -124,8 +134,60 @@ Y finalmente, agrega un link de tipo *fixed* y una pequeña esfera como rueda de
         </visual>
     </link>
 ```
-El modelo ya tiene representación visual. Sin embargo, para que el modelo sea funcional en una simulación, requiere contener, además parámetros inerciales y el contorno de colisión. Considera lo siguiente para complementar tu modelo:
-- Las etiquetas de colisión pueden ser completados simplemente copiando la información de los elementos visuales. De esta forma, el modelo representará su contorno de colisión con el mismo contorno de su forma visual. Es preferible hacer modelos simples para el calculo de colisión, pues simplifica los calculos matemáticos posteriores.
-- El cálculo de inercia es más complejo y requiere usualmente de simplificar las formas complejas a formas simples, como cajas, esferas o cilindros.
-- En los modelos de robot construidos con software de diseño 3D, estos parámetros se calculan automáticamente al momento de exportar el modelo.
+## 4. Agrega parámetros incerciales y contorno de colisión
+El modelo de tu primer robot ya tiene representación visual. Sin embargo, para que sea funcional en una simulación, requiere que sean definidos los parámetros inerciales y el contorno de colisión en cada uno de los *link*.   
+Considera las siguientes recomendaciones para tu modelo:   
 
+- Los contornos de colisión representan los límites físicos del robot. Es conveniente utilizar formas simples para definir estos contornos de colisión, pues así se reduce el tiempo de procesamiento en los motores de cálculo. Cuando el modelo está compuesto por formas simples, como este ejemplo, se puede simplemente copiar la información de los elementos visuales, pero cuando se utilizan archivos tipo *mesh* con muchos detalles para la representación visual, es preferible utilizar archivos diferentes, más simples, para los contornos de colisión.
+- Los parámetros de inercia son utilizados por el motor de física para calcular la dinámica del modelo (las fuerzas y las aceleraciones). La definición de estos parámetros es una tarea compleja, con el fin de conseguir un comportamiento estable y realista en la simulación. Si el modelo se ha construido con la ayuda de un software de diseño 3D, los parámetros inerciales pueden ser exportados con presición. Otra opción es aproximar las formas complejas a formas simples, tales como cajas, esferas o cilindros, para las cuales existen fórmulas conocidas para calcular los parámetros inerciales.
+
+Para el caso de tu primer robot, simplemente copia y pega los parámetros de los componentes visuales en las etiquetas de *<collision>*, y considera los siguientes parámetros inerciales para los links:   
+```
+    <link name="base_link">
+	...
+        <inertial>
+            <origin xyz="0 0 0.125" rpy="0 0 0" />
+            <inertia iyy="0.016755" ixz="0.0" izz="0.016755" iyz="0.0" ixx="0.016755" ixy="0.0" />
+            <mass value="4.2" />
+        </inertial>
+        ...
+    </link>
+    ...
+    <link name="left_wheel">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia iyy="0.002788" ixz="0.0" izz="0.005147" iyz="0.0" ixx="0.002788" ixy="0.0" />
+            <mass value="0.8" />
+        </inertial>
+    </link>
+    ...
+        <link name="right_wheel">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia iyy="0.002788" ixz="0.0" izz="0.005147" iyz="0.0" ixx="0.002788" ixy="0.0" />
+            <mass value="0.8" />
+        </inertial>
+    </link>
+    ...
+    <link name="caster_wheel">
+        <inertial>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <inertia iyy="0.001047" ixz="0.0" izz="0.001047" iyz="0.0" ixx="0.001047" ixy="0.0" />
+            <mass value="0.5" />
+        </inertial>
+    </link>
+    ...
+```
+
+Con esto ya está listo tu primer robot. Puedes ver el archivo completo aquí:    
+## 5. Visualizando el modelo en GazeboSim   
+Aunque aun requiere un controlador para poder moverse, de todas formas puedes hacerlo parte de una simulación de GazeboSim.   
+En un terminal, abre GazeboSim y selecciona un mundo cualquiera.   
+   `gz sim`   
+En otro terminal, ejecuta la siguiente instrucción para hacer aparecer el modelo en GazeboSim, a partir de la descripción URDF publicada en el tópico *robot_description*.    
+   `ros2 run ros_gz_sim create -topic /robot_description`   
+Si no agregamos ninguna coordenada en específico, el modelo aparecerá en el origen del sistema de coordenadas del mundo.   
+NOTA: Este procedimiento sólo funciona con robots descritos únicamente mediante formas básicas en URDF. Para modelos construidos a partir de archivos *mesh* se debe utilizar otro procedimiento.
+## 6. Siguientes pasos
+- Para agregar un controlador a tu robot, pasa a este tutorial: 
+- Para contruir modelos más complejos utilizando archivos *mesh* y elementos adicionales mediante *xacro*, pasa a este tutorial: 
