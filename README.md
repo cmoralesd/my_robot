@@ -52,7 +52,7 @@ Comenzaremos por editar la ubicación de la caja, levantándola del piso:
 Agregaremos una rueda a la izquierda. Para ello es necesario crear un *joint* de tipo *continuous* y agregar un nuevo *link*, dentro de la etiqueta *<robot>*. Daremos una una forma de cilindro al nuevo link, para representar la rueda.
 ```
     <joint name="left_wheel_joint" type="continuous">
-        <origin xyz="-0.1 0.15 0.05" rpy="1.570796 0 0" />
+        <origin xyz="-0.1 0.15 0.05" rpy="-1.570796 0 0" />
         <axis xyz="0 0 1" />
         <parent link="base_link" />
         <child link="left_wheel" />
@@ -97,7 +97,7 @@ return LaunchDescription([
 Agrega ahora una nueva rueda, a la derecha:    
 ```
     <joint name="right_wheel_joint" type="continuous">
-        <origin xyz="-0.1 -0.15 0.05" rpy="1.570796 0 0" />
+        <origin xyz="-0.1 -0.15 0.05" rpy="-1.570796 0 0" />
         <axis xyz="0 0 1" />
         <parent link="base_link" />
         <child link="right_wheel" />
