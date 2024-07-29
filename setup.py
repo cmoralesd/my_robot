@@ -15,7 +15,6 @@ setup(
         (os.path.join('share/' + package_name, 'launch'), glob(os.path.join('launch', '*launch.py'))),
         (os.path.join('share/' + package_name, 'description'), glob(os.path.join('description', '*.*'))),
         (os.path.join('share/' + package_name, 'description/urdf'), glob(os.path.join('description/urdf', '*.*'))),
-
         (os.path.join('share/' + package_name, 'config'), glob(os.path.join('config', '*.*'))),
 
     ],
@@ -28,6 +27,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'my_robot_controller = my_robot.my_robot_controller:main',
+            'joy_velocity_publisher = my_robot.joy_velocity_publisher:main',
         ],
     },
 )

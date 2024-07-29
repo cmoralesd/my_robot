@@ -39,6 +39,22 @@ def generate_launch_description():
 
     )
 
+    # Create a node for join_state_publisher_gui
+    joint_state_publisher_gui_node = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui'
+        
+    )
+
+    # Create a node for my_robot_controller
+    my_robot_controller_node = Node(
+        package='my_robot',
+        executable='my_robot_controller',
+        name='my_robot_controller'
+        
+    )
+
 
     # Launch!
     return LaunchDescription([
@@ -47,4 +63,7 @@ def generate_launch_description():
 
         robot_state_publisher_node,
         rviz2_node,
+        #joint_state_publisher_gui_node,
+        my_robot_controller_node
+
     ])
