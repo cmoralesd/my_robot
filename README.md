@@ -189,5 +189,6 @@ En otro terminal, ejecuta la siguiente instrucción para hacer aparecer el model
 Si no agregamos ninguna coordenada en específico, el modelo aparecerá en el origen del sistema de coordenadas del mundo.   
 NOTA: Este procedimiento sólo funciona con robots descritos únicamente mediante formas básicas en URDF. Para modelos construidos a partir de archivos *mesh* se debe utilizar otro procedimiento.
 ## 6. Siguientes pasos
-- Para agregar un controlador a tu robot, pasa a este tutorial: 
+- Para agregar un controlador a tu robot, pasa a este tutorial: https://youtu.be/3Q9U6D1uC2U   
+- Para controlar tu modelo simulado con un joystick: https://youtu.be/mP-rBK-ST-8   
 - Para contruir modelos más complejos utilizando archivos *mesh* y elementos adicionales mediante *xacro*, pasa a este tutorial: 
