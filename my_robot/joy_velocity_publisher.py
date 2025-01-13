@@ -42,14 +42,14 @@ class JoyVelocityPublisher(Node):
         RT_axis = msg.axes[4]
         SELECT_button = msg.buttons[10]
         START_button = msg.buttons[11]
-        LSTICK_button = msg.buttons[13]
+        #LSTICK_button = msg.buttons[13]
         LSTICK_x_axis = msg.axes[0]
         LSTICK_y_axis = msg.axes[1]
-        RSTICK_button = msg.buttons[14]
+        #RSTICK_button = msg.buttons[14]
         RSTICK_x_axis = msg.axes[2]
         RSTICK_y_axis = msg.axes[3]
-        DIR_X = msg.axes[6]
-        DIR_Y = msg.axes[7]
+        #DIR_X = msg.axes[6]
+        #DIR_Y = msg.axes[7]
 
         if A_button:
             self.get_logger().info(f"Left axes x: {LSTICK_x_axis}, y: {LSTICK_y_axis}")
